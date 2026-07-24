@@ -8,11 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Add these lines here:
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->safeLoad();
+use Dotenv\Dotenv;
+use Mpdf\Mpdf;
 
-use \Mpdf\Mpdf;
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
 
 
 // Check if data is posted
@@ -329,7 +329,7 @@ foreach ($orderedFields as $field) {
     }
     $html .= '<dl class="review-grid">';
     $html .= '<dt class="field-label">' . htmlspecialchars($field['label']) . '</dt>';
-if ($field['property'] === 'authorized_signature_name' && !empty($value)) {
+if ($field['property'] === 'authorized_signature' && !empty($value)) {
     // Render image instead of text
     $html .= '<dd class="field-value">
                 <img src="' . htmlspecialchars($value) . '" style="max-height:150px;">
@@ -349,7 +349,9 @@ if (!$hasData) {
 
 $html .= '</body></html>';
 
-$mpdf = new Mpdf(['tempDir' => '/tmp/mpdf']);
+$mpdf = new Mpdf([
+    'tempDir' => __DIR__ . '/tmp'
+]);
 $mpdf->WriteHTML($html);
 $filename = 'hubspot_form_' . date('Y-m-d_H-i-s') . '.pdf';
 $mpdf->Output($filename, 'D');

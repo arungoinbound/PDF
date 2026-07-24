@@ -1,0 +1,8 @@
+{
+    "name": "example/hubspot-pdf-generator",
+    "description": "Generate PDF from HubSpot form data using MPDF",
+    "require": {
+        "mpdf/mpdf": "^8.0",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}

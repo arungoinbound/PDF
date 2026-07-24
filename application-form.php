@@ -242,18 +242,9 @@ $html = '<!DOCTYPE html>
     background: #FFFFFF;
 }
     .review-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 10px;
 }
-    .review-grid {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 8px 18px;
-    font-size: 13px;
-}
-    .review-grid dt {
+    .review-grid .field-label {
     color: #8C8F93;
     font-size: 11.5px;
     text-transform: uppercase;
@@ -261,8 +252,10 @@ $html = '<!DOCTYPE html>
     font-weight: 600;
     padding-top: 1px;
     align-content: center;
+    width:50%;
+
 }
-    .review-grid dd {
+    .review-grid .field-value {
     margin: 0;
     color: #1F2123;
     font-weight: 500;
@@ -311,7 +304,7 @@ $html = '<!DOCTYPE html>
     <h1>SIGGRAPH Asia 2026 - Application Form</h1>';
 
 $hasData = false;
-$html .= '<div class="review-section"> <div class="review-head"><h4>Applicant Information</h4></div>';
+$html .= '<table class="review-section">  <tr><th colspan="2">Applicant Information</th></tr';
 foreach ($orderedFields as $field) {
     $value = '';
     if ($field['source'] === 'contact') {
@@ -323,21 +316,21 @@ foreach ($orderedFields as $field) {
     if ($value !== '') {
         $hasData = true;
     }
-    $html .= '<dl class="review-grid">';
-    $html .= '<dt class="field-label">' . htmlspecialchars($field['label']) . '</dt>';
+    $html .= '<tr class="review-grid">';
+    $html .= '<td class="field-label">' . htmlspecialchars($field['label']) . '</td>';
 if ($field['property'] === 'authorized_signature' && !empty($value)) {
     // Render image instead of text
-    $html .= '<dd class="field-value">
+    $html .= '<td class="field-value">
                 <img src="' . htmlspecialchars($value) . '" style="max-height:150px;">
-              </dd>';
+              </td>';
 } else {
-    $html .= '<dd class="field-value">' . formatFieldValue($field['property'], $value) . '</dd>';
+    $html .= '<td class="field-value">' . formatFieldValue($field['property'], $value) . '</td>';
 }
 
     
-    $html .= '</dl>';
+    $html .= '</tr>';
 }
-$html .= '</div>';
+$html .= '</table>';
 
 if (!$hasData) {
     $html .= '<div class="no-data">No associated contact or company data available for this object.</div>';

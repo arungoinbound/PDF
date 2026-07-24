@@ -173,9 +173,9 @@ $orderedFields = [
     ['key' => '0-1/premium_marketing_package', 'label' => 'Premium Marketing Package', 'source' => 'contact', 'property' => 'premium_marketing_package'],
     ['key' => '0-1/additional_exhibitor_badges', 'label' => 'Additional Exhibitor Badges', 'source' => 'contact', 'property' => 'additional_exhibitor_badges'],
     ['key' => '0-2/if_different_from_the_name_on_step_1__main_company__contact_information', 'label' => 'if different from the name on Step 1 ( Main Company & Contact Information )', 'source' => 'contact', 'property' => 'if_different_from_the_name_on_step_1__main_company__contact_information'],
-    ['key' => '0-2/official_listing_name', 'label' => 'Official Listing Name', 'source' => 'contact', 'property' => 'official_listing_name'],
-    ['key' => '0-2/country_for_listing_dropdown', 'label' => 'Country for Listing', 'source' => 'contact', 'property' => 'country_for_listing_dropdown'],
-    ['key' => '0-2/looking_for_agents_in', 'label' => 'Looking for Agents In Text', 'source' => 'contact', 'property' => 'looking_for_agents_in'],
+    ['key' => '0-2/official_listing_name', 'label' => 'Official Listing Name', 'source' => 'company', 'property' => 'official_listing_name'],
+    ['key' => '0-2/country_for_listing_dropdown', 'label' => 'Country for Listing', 'source' => 'company', 'property' => 'country_for_listing_dropdown'],
+    ['key' => '0-2/looking_for_agents_in', 'label' => 'Looking for Agents In Text', 'source' => 'company', 'property' => 'looking_for_agents_in'],
     ['key' => 'LEGAL_CONSENT.subscription_type_536049909', 'label' => 'Subscription Type Consent', 'source' => 'contact', 'property' => 'LEGAL_CONSENT.subscription_type_536049909'],
     ['key' => 'LEGAL_CONSENT.processing', 'label' => 'Processing Consent', 'source' => 'contact', 'property' => 'LEGAL_CONSENT.processing'],
     ['key' => '0-1/authorized_signature', 'label' => 'Authorized Signature Name', 'source' => 'contact', 'property' => 'authorized_signature'],
@@ -322,10 +322,6 @@ foreach ($orderedFields as $field) {
 
     if ($value !== '') {
         $hasData = true;
-    }
- // Skip empty or whitespace-only values
-    if (trim($value) === '') {
-        continue;
     }
     $html .= '<dl class="review-grid">';
     $html .= '<dt class="field-label">' . htmlspecialchars($field['label']) . '</dt>';

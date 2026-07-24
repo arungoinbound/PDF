@@ -304,7 +304,7 @@ $html = '<!DOCTYPE html>
     <h1>SIGGRAPH Asia 2026 - Application Form</h1>';
 
 $hasData = false;
-$html .= '<table class="review-section">  <tr><th colspan="2">Applicant Information</th></tr';
+$html .= '<table class="review-section">  <tr><th colspan="2">Applicant Information</th></tr>';
 foreach ($orderedFields as $field) {
     $value = '';
     if ($field['source'] === 'contact') {

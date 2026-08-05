@@ -178,7 +178,8 @@ $orderedFields = [
     ['key' => '0-2/looking_for_agents_in', 'label' => 'Looking for Agents In Text', 'source' => 'company', 'property' => 'looking_for_agents_in'],
     ['key' => 'LEGAL_CONSENT.subscription_type_536049909', 'label' => 'Subscription Type Consent', 'source' => 'contact', 'property' => 'LEGAL_CONSENT.subscription_type_536049909'],
     ['key' => 'LEGAL_CONSENT.processing', 'label' => 'Processing Consent', 'source' => 'contact', 'property' => 'LEGAL_CONSENT.processing'],
-    ['key' => '0-1/authorized_signature', 'label' => 'Authorized Signature Name', 'source' => 'contact', 'property' => 'authorized_signature'],
+    ['key' => '0-1/authorized_signature', 'label' => 'Authorized Signature', 'source' => 'contact', 'property' => 'authorized_signature'],
+    ['key' => '0-1/authorized_signature_image', 'label' => 'Authorized Signature', 'source' => 'contact', 'property' => 'authorized_signature_image'],
     ['key' => '0-1/date_of_submission', 'label' => 'Date of Submission', 'source' => 'contact', 'property' => 'date_of_submission']
 ];
 
@@ -318,7 +319,7 @@ foreach ($orderedFields as $field) {
     }
     $html .= '<tr class="review-grid">';
     $html .= '<td class="field-label">' . htmlspecialchars($field['label']) . '</td>';
-if ($field['property'] === 'authorized_signature' && !empty($value)) {
+if ($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)) {
     // Render image instead of text
     $html .= '<td class="field-value">
                 <img src="' . htmlspecialchars($value) . '" style="max-height:150px;">

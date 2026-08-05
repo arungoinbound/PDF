@@ -327,7 +327,7 @@ foreach ($orderedFields as $field) {
     
 if (($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)){
     // Render image instead of text
-    $html .= '<td class="field-value">' . formatFieldValue($field['property'], $value) . '</td>';
+    $html .= '<td class="field-value">' .  $value . '</td>';
 } else {
     $html .= '<td class="field-value">' . formatFieldValue($field['property'], $value) . '</td>';
 }

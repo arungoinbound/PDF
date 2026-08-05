@@ -79,6 +79,91 @@ function hubspotApiGet(string $url, array $query = []): array
     return $data;
 }
 
+function getPrivateFileSignedUrl(string $fileId): ?array
+{
+    $url = 'https://api.hubapi.com/files/v3/files/' . rawurlencode($fileId) . '/signed-url';
+
+    $headers = getHubspotAuthHeader();
+
+    $ch = curl_init($url);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $response = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+
+    curl_close($ch);
+
+    if ($response === false) {
+        error_log('HubSpot private file request failed: ' . $error);
+        return null;
+    }
+
+    $data = json_decode($response, true);
+
+    if ($status >= 400 || !is_array($data)) {
+        error_log(
+            'HubSpot signed URL API error: HTTP ' .
+            $status . ' - ' . $response
+        );
+        return null;
+    }
+
+    if (empty($data['url'])) {
+        error_log('HubSpot signed URL response does not contain URL.');
+        return null;
+    }
+
+    return $data;
+}
+
+function downloadImageAsBase64(string $url): ?array
+{
+    $ch = curl_init($url);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $imageData = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    $error = curl_error($ch);
+
+    curl_close($ch);
+
+    if ($imageData === false || $status >= 400 || empty($imageData)) {
+        error_log(
+            'Unable to download HubSpot image. HTTP: ' .
+            $status . ' Error: ' . $error
+        );
+
+        return null;
+    }
+
+    // Remove charset if returned, e.g. image/png; charset=binary
+    $contentType = explode(';', $contentType)[0];
+
+    if (!in_array($contentType, [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/gif',
+        'image/webp'
+    ], true)) {
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $contentType = $finfo->buffer($imageData);
+    }
+
+    return [
+        'mime' => $contentType,
+        'base64' => base64_encode($imageData)
+    ];
+}
+
 function fetchObjectProperties(string $objectType, string $objectId, array $properties): array
 {
     $url = 'https://api.hubapi.com/crm/v3/objects/' . rawurlencode($objectType) . '/' . rawurlencode($objectId);
@@ -325,11 +410,49 @@ foreach ($orderedFields as $field) {
     $html .= '<tr class="review-grid">';
     $html .= '<td class="field-label">' . htmlspecialchars($field['label']) . '</td>';
     
-if (($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)){
-    // Render image instead of text
-    $html .= '<td class="field-value">' .  $value . '</td>';
+if (($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)) {
+    $signedFile = null;
+
+    if (preg_match('/\/files\/(?:v3\/)?files\/(\d+)/', $value, $matches)) {
+        $fileId = $matches[1];
+
+        $signedFile = getPrivateFileSignedUrl($fileId);
+    }
+
+    if (!$signedFile && preg_match('/^\d+$/', trim($value))) {
+        $signedFile = getPrivateFileSignedUrl(trim($value));
+    }
+
+    if ($signedFile && !empty($signedFile['url'])) {
+
+        $image = downloadImageAsBase64($signedFile['url']);
+
+        if ($image) {
+            $html .= '<td class="field-value">
+                <img src="data:' . htmlspecialchars($image['mime'], ENT_QUOTES, 'UTF-8') .
+                ';base64,' . $image['base64'] . '"
+                style="max-height:150px; max-width:300px;">
+            </td>';
+        } else {
+            $html .= '<td class="field-value">
+                <div class="field-placeholder">
+                    Unable to load signature image.
+                </div>
+            </td>';
+        }
+
+    } else {
+        $html .= '<td class="field-value">
+            <div class="field-placeholder">
+                Unable to access private signature image.
+            </div>
+        </td>';
+    }
+
 } else {
-    $html .= '<td class="field-value">' . formatFieldValue($field['property'], $value) . '</td>';
+    $html .= '<td class="field-value">' .
+        formatFieldValue($field['property'], $value) .
+        '</td>';
 }
     $html .= '</tr>';
 }

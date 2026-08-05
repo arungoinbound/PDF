@@ -450,9 +450,9 @@ if (($field['property'] === 'authorized_signature' || $field['property'] === 'au
     }
 
 } else {
-    $html .= '<td class="field-value">' .
-        formatFieldValue($field['property'], $value) .
-        '</td>';
+    $html .= '<td class="field-value">
+                <img src="' . htmlspecialchars($value) . '" style="max-height:150px;">
+              </td>';
 }
     $html .= '</tr>';
 }

@@ -317,19 +317,22 @@ foreach ($orderedFields as $field) {
     if ($value !== '') {
         $hasData = true;
     }
+
+      if ($value == '') {
+       continue;
+    }
+    
     $html .= '<tr class="review-grid">';
     $html .= '<td class="field-label">' . htmlspecialchars($field['label']) . '</td>';
     
 if (($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)){
     // Render image instead of text
     $html .= '<td class="field-value">
-                <img src="' . htmlspecialchars($value) . '" style="max-height:150px;">
+                <img src="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '" style="max-height:150px;">
               </td>';
 } else {
     $html .= '<td class="field-value">' . formatFieldValue($field['property'], $value) . '</td>';
 }
-
-    
     $html .= '</tr>';
 }
 $html .= '</table>';

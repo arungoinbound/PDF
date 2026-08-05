@@ -319,7 +319,8 @@ foreach ($orderedFields as $field) {
     }
     $html .= '<tr class="review-grid">';
     $html .= '<td class="field-label">' . htmlspecialchars($field['label']) . '</td>';
-if ($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)) {
+    
+if (($field['property'] === 'authorized_signature' || $field['property'] === 'authorized_signature_image') && !empty($value)){
     // Render image instead of text
     $html .= '<td class="field-value">
                 <img src="' . htmlspecialchars($value) . '" style="max-height:150px;">
